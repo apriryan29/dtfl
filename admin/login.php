@@ -1,4 +1,39 @@
-<?php include'include/head.php' ?>
+<?php 
+session_start();
+include 'include/head.php';
+include 'include/config.php';
+
+if (isset($_POST['login'])) {
+
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
+
+    // QUERY sesuai tabel user milikmu
+    $query = mysqli_query($conn, "SELECT * FROM user WHERE username='$username'");
+
+    if (mysqli_num_rows($query) > 0) {
+
+        $data = mysqli_fetch_assoc($query);
+
+        // password TIDAK di-hash (sesuai struktur tabel kamu)
+        if ($password == $data['password']) {
+
+            // Simpan session
+            $_SESSION['id_user']  = $data['id_user'];
+            $_SESSION['username'] = $data['username'];
+            $_SESSION['email']    = $data['email'];
+
+            header("Location: index.php");
+            exit();
+        } else {
+            $error = "Password salah!";
+        }
+
+    } else {
+        $error = "Username tidak ditemukan!";
+    }
+}
+?>
 
 <body>
   <div class="container-scroller">
@@ -7,47 +42,44 @@
         <div class="row w-100 mx-0">
           <div class="col-lg-4 mx-auto">
             <div class="auth-form-light text-left py-5 px-4 px-sm-5 shadow rounded">
+
+              <?php if (!empty($error)) { ?>
+                <div class="alert alert-danger"><?= $error; ?></div>
+              <?php } ?>
+
               <div class="brand-logo">
                 <a href="../index.php">
                   <img src="../assets/img/logo.webp" alt="logo">
                 </a>
               </div>
+
               <h4>Selamat Datang!</h4>
               <h6 class="font-weight-light">Silakan Login untuk melanjutkan</h6>
-              <form class="pt-3">
+
+              <form class="pt-3" method="POST">
                 <div class="form-group">
-                  <input type="email" class="form-control form-control-lg" placeholder="Username">
+                  <input type="text" name="username" class="form-control form-control-lg" placeholder="Username" required>
                 </div>
+
                 <div class="form-group">
-                  <input type="password" class="form-control form-control-lg" placeholder="Password">
+                  <input type="password" name="password" class="form-control form-control-lg" placeholder="Password" required>
                 </div>
+
                 <div class="mt-3">
-                  <a class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" href="index.php">Masuk</a>
+                  <button type="submit" name="login" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">
+                    Masuk
+                  </button>
                 </div>
+
                 <div class="my-2 d-flex justify-content-end align-items-end">
                   <a href="#" class="auth-link text-black">Lupa Kata Sandi?</a>
                 </div>
               </form>
+
             </div>
           </div>
         </div>
       </div>
-      <!-- content-wrapper ends -->
     </div>
-    <!-- page-body-wrapper ends -->
-  </div>
-  <!-- container-scroller -->
-  <!-- plugins:js -->
-  <script src="vendors/js/vendor.bundle.base.js"></script>
-  <!-- endinject -->
-  <!-- Plugin js for this page -->
-  <!-- End plugin js for this page -->
-  <!-- inject:js -->
-  <script src="js/off-canvas.js"></script>
-  <script src="js/hoverable-collapse.js"></script>
-  <script src="js/template.js"></script>
-  <script src="js/settings.js"></script>
-  <script src="js/todolist.js"></script>
-  <!-- endinject -->
 </body>
 </html>

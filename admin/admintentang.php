@@ -10,7 +10,7 @@
                   <p class="card-description">
                     Formulir isian tentang perusahaan
                   </p>
-                  <form class="forms-sample">
+                  <form class="forms-sample" method="POST">
                     <div class="form-group">
                       <label for="exampleInputName1">Nama Perusahaan</label>
                       <input type="text" class="form-control" id="exampleInputName1" placeholder="Masukan nama perusahaan">
